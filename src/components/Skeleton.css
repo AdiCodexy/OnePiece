@@ -1,0 +1,51 @@
+/* src/components/Skeleton.css */
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+.skeleton-page {
+  padding: 4rem 5vw;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 100vh;
+}
+
+.skeleton-card {
+  height: 200px;
+  margin-bottom: 2rem;
+  border-radius: 16px;
+}
+
+.skeleton-line {
+  height: 16px;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.skeleton-line.short {
+  width: 40%;
+}
+
+.skeleton-line.medium {
+  width: 65%;
+}
+
+.skeleton-line.long {
+  width: 90%;
+}
+
+.skeleton-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: inline-block;
+}

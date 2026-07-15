@@ -1,0 +1,38 @@
+/* src/components/Footer.css */
+
+.site-footer {
+  background: #111;
+  color: #666;
+  padding: 3rem 5vw;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-brand {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.footer-copy {
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .footer-inner {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

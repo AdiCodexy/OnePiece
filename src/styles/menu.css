@@ -1,0 +1,171 @@
+/* =========================================
+   GSAP STAGGERED MENU (GLOBAL)
+========================================= */
+
+/* Trigger Button */
+.mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111111;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.menu-btn-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-btn-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.menu-btn-text {
+    height: 1.2rem;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.menu-text-inner {
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+}
+
+.m-text {
+    height: 1.2rem;
+    line-height: 1.2rem;
+}
+
+/* Full Screen Container */
+.mobile-menu {
+    display: block;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9990;
+    pointer-events: none;
+}
+
+.menu-underlay, .menu-panel {
+    position: absolute;
+    top: 0; right: 0;
+    width: 100vw;
+    max-width: 450px;
+    height: 100vh;
+    border-radius: 24px 0 0 24px;
+    transform: translateX(100%);
+    will-change: transform;
+}
+
+.menu-underlay.layer-1 {
+    background-color: #333333;
+    z-index: 1;
+}
+
+.menu-underlay.layer-2 {
+    background-color: #111111;
+    z-index: 2;
+}
+
+.menu-panel {
+    background-color: #FFFFFF;
+    z-index: 3;
+    padding: 6em 3em 3em 3em;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.menu-item {
+    display: flex;
+    align-items: flex-start;
+    text-decoration: none;
+    color: #111111;
+    gap: 1rem;
+}
+
+.menu-num {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #5A45FF;
+    vertical-align: super;
+    margin-left: 0.25rem;
+    line-height: 0;
+}
+
+.menu-text-wrap {
+    overflow: hidden;
+}
+
+.menu-text {
+    display: block;
+    font-size: 3.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.menu-item:hover .menu-text {
+    color: #5A45FF;
+    text-decoration: none;
+}
+
+.menu-footer {
+    margin-top: 4rem;
+}
+
+.footer-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #5A45FF;
+    margin-bottom: 1.2rem;
+}
+
+.footer-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.footer-links a {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #111111;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #5A45FF;
+}
+

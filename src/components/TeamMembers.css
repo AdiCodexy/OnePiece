@@ -1,0 +1,133 @@
+.team-members-section {
+  padding: 8rem 5vw;
+  background-color: #FAFAFA;
+}
+
+.tm-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tm-row {
+  display: flex;
+  align-items: center;
+  gap: 6rem;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.3s ease;
+}
+
+.tm-row:hover .tm-image-wrapper {
+  transform: scale(1.02);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+.tm-row-reverse {
+  flex-direction: row-reverse;
+}
+
+.tm-image-col,
+.tm-info-col {
+  flex: 1;
+}
+
+.tm-image-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #EEE;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tm-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tm-info-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tm-eyebrow {
+  font-family: monospace, -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #666;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.tm-name-link {
+  text-decoration: none;
+  color: #666;
+  transition: color 0.2s ease;
+}
+
+.tm-name-link:hover {
+  color: #111;
+}
+
+.tm-bio {
+  font-size: 2.2rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #111;
+  letter-spacing: -0.02em;
+  margin: 0 0 2.5rem 0;
+}
+
+.tm-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 2rem;
+}
+
+.tm-meta-item {
+  font-size: 13px;
+  color: #444;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.tm-meta-item strong {
+  font-weight: 600;
+  color: #222;
+}
+
+.tm-stars-container {
+  display: flex;
+  gap: 0.2rem;
+  color: #111; /* Or a gold color if preferred, but dark fits the theme */
+  font-size: 1.2rem;
+}
+
+.tm-star {
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .team-members-section {
+    padding: 4rem 5vw;
+  }
+
+  .tm-row,
+  .tm-row-reverse {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .tm-container {
+    gap: 4rem;
+  }
+}

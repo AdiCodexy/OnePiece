@@ -1,0 +1,23 @@
+.members-page-container {
+  position: relative;
+  width: 100%;
+}
+
+
+
+.members-hero {
+  position: relative;
+  z-index: 1;
+  /* Ensure it's transparent to see bg */
+  background: transparent !important;
+}
+
+.members-subtitle {
+  color: #333;
+}
+
+.members-content-wrapper {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}

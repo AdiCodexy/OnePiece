@@ -1,0 +1,115 @@
+/* src/components/FeatureAccordion.css */
+
+.feature-accordion-section {
+  background-color: #FAFAFA;
+  padding-top: 5rem; /* Reduce gap to why-section */
+  padding-bottom: 4rem; /* Reduce gap to CTA */
+  position: relative;
+  z-index: 2;
+}
+
+.fa-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: left;
+  padding-right: 120px; /* Keep clear of the fixed menu button */
+}
+
+.fa-left {
+  position: relative;
+}
+
+.fa-sticky-content {
+  position: sticky;
+  top: 6rem; /* Stick below the top of viewport */
+}
+
+.fa-heading {
+  font-size: 42px;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.03em;
+  color: #111;
+}
+
+.fa-body {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.accordion-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.accordion-item {
+  border-bottom: 1px solid #e5e4e7;
+}
+
+.accordion-item:first-child {
+  border-top: 1px solid #e5e4e7;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1.5rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #111;
+  font-family: var(--heading);
+  font-size: 24px;
+  font-weight: 500;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+
+.accordion-header:hover {
+  color: #aa3bff;
+}
+
+.accordion-icon {
+  font-size: 28px;
+  font-weight: 300;
+  transition: transform 0.3s ease;
+  line-height: 1;
+}
+
+.accordion-item.open .accordion-icon {
+  transform: rotate(45deg); /* + becomes x */
+}
+
+.accordion-body-wrapper {
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out;
+}
+
+.accordion-body {
+  padding-bottom: 1.5rem;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #333;
+}
+
+@media (max-width: 900px) {
+  .fa-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding-right: 0; /* Let mobile menu float since layout changes */
+  }
+  
+  .fa-sticky-content {
+    position: relative;
+    top: 0;
+  }
+  
+  .fa-heading {
+    font-size: 32px;
+  }
+}
