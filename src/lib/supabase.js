@@ -4,8 +4,8 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 // If credentials exist, initialize supabase, else null
-export const supabase = (supabaseUrl && supabaseAnonKey) 
-  ? createClient(supabaseUrl, supabaseAnonKey) 
+export const supabase = (supabaseUrl && supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
 // Fallback mock data in case Supabase credentials aren't provided yet
@@ -54,6 +54,69 @@ export const mockMembers = [
     subjects: 'Ballistics, Tactics',
     image_filename: 'Gunko.jpg',
     fleet_id: null,
+    banner_filename: null
+  },
+  {
+    id: 6,
+    name: 'ARLONG',
+    bio: 'Captain of the Arlong Pirates. Believes fish-men are the supreme race. Has a terrifying bite and uses a massive saw sword.',
+    hobbies: 'Extortion, Swimming, Plotting',
+    subjects: 'Fish-man Karate, Naval Strategy',
+    image_filename: 'Arlong.jpg',
+    banner_filename: null
+  },
+  {
+    id: 7,
+    name: 'BECKMAN',
+    bio: 'First Mate of the Red Hair Pirates. Extremely intelligent and level-headed. His mere presence is enough to intimidate an Admiral.',
+    hobbies: 'Smoking, Strategy, Drinking',
+    subjects: 'Marksmanship, Observation Haki',
+    image_filename: 'Beckman.jpg',
+    banner_filename: null
+  },
+  {
+    id: 8,
+    name: 'DRAGON',
+    bio: "Supreme Commander of the Revolutionary Army and the world's worst criminal. Shrouded in mystery and always accompanied by fierce winds.",
+    hobbies: 'Looking East, Revolution',
+    subjects: 'Geopolitics, Advanced Haki',
+    image_filename: 'Dragon.jpg',
+    banner_filename: null
+  },
+  {
+    id: 9,
+    name: 'SHANKS',
+    bio: "One of the Four Emperors of the Sea. Known for his overwhelming Conqueror's Haki and his role in inspiring the next generation.",
+    hobbies: 'Partying, Sleeping, Peacekeeping',
+    subjects: "Conqueror's Haki, Swordsmanship",
+    image_filename: 'Shanks.jpg',
+    banner_filename: null
+  },
+  {
+    id: 10,
+    name: 'DOFLAMINGO',
+    bio: "Former Warlord of the Sea and underworld broker 'Joker'. Manipulates people like puppets using his String-String Fruit.",
+    hobbies: 'Puppeteering, Laughing, Business',
+    subjects: 'Underworld Economics, Awakening',
+    image_filename: 'Doflamingo.jpg',
+    banner_filename: null
+  },
+  {
+    id: 11,
+    name: 'GAIMON',
+    bio: 'A former pirate who has lived trapped inside a treasure chest on the Island of Rare Animals for decades.',
+    hobbies: 'Protecting Animals, Waiting',
+    subjects: 'Island Ecology, Marksmanship',
+    image_filename: 'GAIMON.jpg',
+    banner_filename: null
+  },
+  {
+    id: 12,
+    name: 'KOBY',
+    bio: 'Marine Captain and member of SWORD. Started as a chore boy but trained intensely under Garp to become a hero.',
+    hobbies: 'Training, Justice, Swimming',
+    subjects: 'Rokushiki, Observation Haki',
+    image_filename: 'Koby.jpg',
     banner_filename: null
   }
 ];
@@ -164,12 +227,13 @@ const getDaysAgoStr = (days) => {
 
 let mockDailyLogs = [
   // pre-populate some data for Luffy (id: 1) and Zoro (id: 2)
-  { member_id: 1, date: getDaysAgoStr(1), hours: 6, goal_met: true },
-  { member_id: 1, date: getDaysAgoStr(2), hours: 5, goal_met: true },
-  { member_id: 2, date: getDaysAgoStr(1), hours: 7, goal_met: true },
-  { member_id: 3, date: getDaysAgoStr(1), hours: 2, goal_met: false },
+  { member_id: 1, date: getDaysAgoStr(1), hours: 6, goal_met: true, notes: '- Navigation basics\n- Leadership skills\n- Advanced meat eating' },
+  { member_id: 1, date: getDaysAgoStr(2), hours: 5, goal_met: true, notes: '- Meat eating competition strategies' },
+  { member_id: 1, date: getTodayDateStr(), hours: 8, goal_met: true, notes: '- Haki training\n- Gear 5 visualization\n- Pirate King philosophy' },
+  { member_id: 2, date: getDaysAgoStr(1), hours: 7, goal_met: true, notes: '- Sword training' },
+  { member_id: 3, date: getDaysAgoStr(1), hours: 2, goal_met: false, notes: '- Wano history' },
   // Gunko (id: 5) logged today
-  { member_id: 5, date: getTodayDateStr(), hours: 5, goal_met: true },
+  { member_id: 5, date: getTodayDateStr(), hours: 5, goal_met: true, notes: '- Marksmanship drills' },
 ];
 
 export async function fetchMemberGoals() {
@@ -185,18 +249,18 @@ export async function fetchDailyLogs() {
   return [...mockDailyLogs];
 }
 
-export async function logDailyHours(memberId, dateStr, hours, goal) {
+export async function logDailyHours(memberId, dateStr, hours, goal, notes = '') {
   const goalMet = hours >= goal;
   const existingLogIndex = mockDailyLogs.findIndex(log => log.member_id === memberId && log.date === dateStr);
-  
-  const updatedLog = { member_id: memberId, date: dateStr, hours, goal_met: goalMet };
-  
+
+  const updatedLog = { member_id: memberId, date: dateStr, hours, goal_met: goalMet, notes };
+
   if (existingLogIndex >= 0) {
     mockDailyLogs[existingLogIndex] = updatedLog;
   } else {
     mockDailyLogs.push(updatedLog);
   }
-  
+
   return updatedLog;
 }
 
@@ -237,11 +301,11 @@ export async function saveQuizAttempt(memberId, score, timeTakenSeconds) {
   return newAttempt;
 }
 
-export async function generateQuiz(subjects, hobbies) {
+export async function generateQuiz(subjects, hobbies, studyNotes) {
   if (supabase) {
     try {
       const { data, error } = await supabase.functions.invoke('generate-quiz', {
-        body: { subjects, hobbies }
+        body: { subjects, hobbies, studyNotes }
       });
       if (!error && data && Array.isArray(data)) {
         return data;
@@ -250,19 +314,19 @@ export async function generateQuiz(subjects, hobbies) {
       console.warn("Failed to call Edge Function, falling back to mock data.", e);
     }
   }
-  
+
   // MOCK FALLBACK (simulate API delay)
   await new Promise(resolve => setTimeout(resolve, 1500));
-  
+
   return [
     {
-      question: `Which of these relates to ${hobbies.split(',')[0]}?`,
-      options: ["Reading a book", "Fighting enemies", "Eating food", "Sleeping all day"],
+      question: `Regarding what you recently studied: ${studyNotes.split(',')[0] || subjects.split(',')[0]} - which is most accurate?`,
+      options: ["Reading a book", "Fighting enemies", "Mastering the fundamental concepts", "Sleeping all day"],
       correctIndex: 2
     },
     {
-      question: `In the field of ${subjects.split(',')[0]}, what is most important?`,
-      options: ["Giving up", "Leading by example", "Running away", "Taking notes"],
+      question: `In the context of ${studyNotes.split(',').length > 1 ? studyNotes.split(',')[1] : hobbies.split(',')[0]}, what is crucial?`,
+      options: ["Giving up", "Applying it to real world projects", "Running away", "Ignoring best practices"],
       correctIndex: 1
     },
     {
@@ -301,8 +365,8 @@ export async function generateQuiz(subjects, hobbies) {
       correctIndex: 0
     },
     {
-      question: `Considering ${subjects.split(',').pop()}, what is the ultimate goal?`,
-      options: ["Survival", "Absolute victory", "Making friends", "Finding the One Piece"],
+      question: `Considering your recent focus on: ${studyNotes.substring(0, 30)}... what is the ultimate goal?`,
+      options: ["Survival", "Absolute mastery and understanding", "Making friends", "Finding the One Piece"],
       correctIndex: 1
     }
   ];

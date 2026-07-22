@@ -1,23 +1,224 @@
-.members-page-container {
-  position: relative;
+/* src/pages/MembersPage.css */
+
+.members-feed-container {
+  width: 100vw;
+  background: #000000;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+
+
+.profile-bento-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1.8fr;
+  grid-template-rows: 90px 1fr 1.2fr;
+  gap: 24px;
+  padding: 60px 80px;
+  height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.members-feed-scroll {
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+.bento-box {
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.bento-profile-header {
+  grid-column: 1 / span 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 2rem;
+  background: #f5eedb; /* Cream */
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+/* Left Column: Identity */
+.bento-profile-identity {
+  grid-column: 1;
+  grid-row: 2 / span 2;
+  background: #0f2043; /* Oxford Blue */
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.profile-avatar-large {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 6px solid #d4af37; /* Gold */
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.profile-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 32px;
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+.profile-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #d4af37;
+  margin: 0 0 24px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.profile-bio {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.8);
+}
+
+/* Right Column Top: Stats */
+.bento-profile-stats {
+  grid-column: 2;
+  grid-row: 2;
+  background: #004225; /* Racing Green */
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
   width: 100%;
 }
 
-
-
-.members-hero {
-  position: relative;
-  z-index: 1;
-  /* Ensure it's transparent to see bg */
-  background: transparent !important;
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
-.members-subtitle {
-  color: #333;
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 48px;
+  font-weight: 900;
+  color: #f5eedb;
+  margin-bottom: 8px;
 }
 
-.members-content-wrapper {
-  position: relative;
-  z-index: 2;
-  background: transparent;
+.stat-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(245, 238, 219, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Right Column Bottom: Media */
+.bento-profile-media {
+  grid-column: 2;
+  grid-row: 3;
+  background: #e5dac8; /* Khaki */
+  color: #111;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.media-section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 800;
+  color: #7c121e; /* Crimson */
+  margin: 0 0 1.5rem 0;
+  text-transform: uppercase;
+}
+
+.hobbies-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.hobby-dot {
+  color: #004225;
+  font-weight: bold;
+}
+
+/* Manual Audio Player UI */
+.audio-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 16px 24px;
+  background: #fff;
+  border-radius: 40px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  color: #111;
+  width: fit-content;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.audio-status:hover {
+  transform: scale(1.05);
+}
+
+.audio-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #7c121e;
+  animation: pulse 1.5s infinite;
+}
+.audio-indicator.paused {
+  background: #ccc;
+  animation: none;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(124, 18, 30, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(124, 18, 30, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(124, 18, 30, 0); }
+}
+
+@media (max-width: 1024px) {
+  .profile-bento-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    height: auto;
+    padding: 30px;
+  }
+  .bento-profile-header, .bento-profile-identity, .bento-profile-stats, .bento-profile-media {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .members-feed-scroll {
+    scroll-snap-type: none;
+    overflow-y: visible;
+    height: auto;
+  }
 }

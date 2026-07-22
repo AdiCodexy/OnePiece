@@ -112,34 +112,29 @@ const SideMenu = () => {
         <div className="menu-underlay layer-2" ref={layer2Ref}></div>
         <div className="menu-panel" ref={panelRef}>
           <nav className="menu-nav">
-            <Link to="/" className="menu-item" onClick={toggleMenu}>
+            <a href="/#home" className="menu-item" onClick={toggleMenu}>
               <div className="menu-text-wrap">
                 <span className="menu-text">ONEPIECE</span>
               </div>
-            </Link>
-            <Link to="/challenge" className="menu-item" onClick={toggleMenu}>
+            </a>
+            <a href="/#challenge" className="menu-item" onClick={toggleMenu}>
               <div className="menu-text-wrap">
                 <span className="menu-text">Challenge</span>
               </div>
-            </Link>
-            <Link to="/quiz" className="menu-item" onClick={toggleMenu}>
+            </a>
+            <a href="/#quiz" className="menu-item" onClick={toggleMenu}>
               <div className="menu-text-wrap">
                 <span className="menu-text">Quiz</span>
               </div>
-            </Link>
-            <Link to="/leaderboard" className="menu-item" onClick={toggleMenu}>
+            </a>
+            <a href="/#leaderboard" className="menu-item" onClick={toggleMenu}>
               <div className="menu-text-wrap">
                 <span className="menu-text">Leaderboard</span>
               </div>
-            </Link>
+            </a>
             <Link to="/members" className="menu-item" onClick={toggleMenu}>
               <div className="menu-text-wrap">
-                <span className="menu-text">PROFILES</span>
-              </div>
-            </Link>
-            <Link to="/ships" className="menu-item" onClick={toggleMenu}>
-              <div className="menu-text-wrap">
-                <span className="menu-text">Ships</span>
+                <span className="menu-text">Crew</span>
               </div>
             </Link>
           </nav>

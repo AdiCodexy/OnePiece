@@ -7,7 +7,6 @@ import {
   getTodayDateStr 
 } from '../lib/supabase';
 import TextPressure from '../components/TextPressure';
-import Footer from '../components/Footer';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -149,18 +148,25 @@ export default function LeaderboardPage() {
     return `${Math.round(member.overallScore)} pts`;
   };
 
-  const top3 = sortedData.slice(0, 3);
-  const rest = sortedData.slice(3);
-  
   // Find current user rank
   const currentUserIndex = sortedData.findIndex(m => m.id === currentUser.id);
   const currentUserRank = currentUserIndex + 1;
-  const showStickyFooter = currentUserRank > 3;
 
   return (
     <div ref={containerRef} className="lb-page-container">
-      <main className="lb-hero" id="hero" ref={heroRef}>
-        <div className="hero-text-container">
+      <div className="lb-bento-grid">
+        
+        {/* Top Header - Left (Tabs) */}
+        <div className="bento-header-tabs bento-box">
+          <div className="lb-tabs">
+            <button className={`lb-tab ${activeTab === 'overall' ? 'active' : ''}`} onClick={() => setActiveTab('overall')}>Overall</button>
+            <button className={`lb-tab ${activeTab === 'streak' ? 'active' : ''}`} onClick={() => setActiveTab('streak')}>By Streak</button>
+            <button className={`lb-tab ${activeTab === 'quiz' ? 'active' : ''}`} onClick={() => setActiveTab('quiz')}>By Quiz Score</button>
+          </div>
+        </div>
+
+        {/* Top Header - Right (Title) */}
+        <div className="bento-header-title bento-box" id="hero" ref={heroRef}>
           <TextPressure 
             text="L E A D E R B O A R D"
             flex={true}
@@ -169,101 +175,49 @@ export default function LeaderboardPage() {
             width={true}
             weight={true}
             italic={true}
-            textColor="#111111"
-            strokeColor="#111111"
-            minFontSize={36}
+            sizeFactor={1.2}
+            textColor="#000000"
+            strokeColor="#000000"
+            minFontSize={24}
           />
         </div>
-        <div className="subtitle">See who is leading the pack.</div>
-      </main>
 
-      <div className="lb-content-wrapper">
-        <section className="lb-section-padding">
-          
-          <div className="challenge-identity-bar lb-anim">
-            <select 
-              className="qz-identity-select"
-              value={currentUser.id}
-              onChange={(e) => {
-                const newId = parseInt(e.target.value);
-                setCurrentUser(members.find(m => m.id === newId));
-                localStorage.setItem('testingUserId', newId);
-              }}
-            >
-              {members.map(m => (
-                <option key={m.id} value={m.id}>Testing as: {m.name}</option>
-              ))}
-            </select>
-          </div>
+        {/* Left Column: Personal Rank */}
+        <div className="bento-lb-personal bento-box lb-anim">
+          <div className="personal-rank-badge">Your Standing</div>
+          <div className="personal-rank-num">#{currentUserRank}</div>
+          <img 
+            src={`/assets/member/${currentUser.image_filename}`} 
+            alt={currentUser.name} 
+            className="podium-avatar" 
+            style={{ width: '120px', height: '120px', border: '4px solid #f5eedb', margin: '20px 0' }}
+            onError={(e) => e.target.src='/assets/Mainimg/hero-bg.jpg'} 
+          />
+          <h2 className="pq-name">{currentUser.name}</h2>
+          <div className="personal-score">{getScoreDisplay(sortedData[currentUserIndex])}</div>
 
-          <div className="lb-tabs lb-anim">
-            <button className={`lb-tab ${activeTab === 'overall' ? 'active' : ''}`} onClick={() => setActiveTab('overall')}>Overall</button>
-            <button className={`lb-tab ${activeTab === 'streak' ? 'active' : ''}`} onClick={() => setActiveTab('streak')}>By Streak</button>
-            <button className={`lb-tab ${activeTab === 'quiz' ? 'active' : ''}`} onClick={() => setActiveTab('quiz')}>By Quiz Score</button>
-          </div>
+        </div>
 
-          <div className="lb-podium lb-anim">
-            {/* Rank 2 */}
-            {top3[1] && (
-              <div className="podium-card rank-2">
-                <div className="podium-badge">#2</div>
-                <img src={`/assets/member/${top3[1].image_filename}`} alt={top3[1].name} className="podium-avatar" onError={(e) => e.target.src='/assets/Mainimg/hero-bg.jpg'} />
-                <h3 className="podium-name"><Link to={`/member/${top3[1].id}`} className="profile-link">{top3[1].name}</Link></h3>
-                <div className="podium-score">{getScoreDisplay(top3[1])}</div>
-              </div>
-            )}
-            
-            {/* Rank 1 */}
-            {top3[0] && (
-              <div className="podium-card rank-1">
-                <div className="podium-badge">#1</div>
-                <img src={`/assets/member/${top3[0].image_filename}`} alt={top3[0].name} className="podium-avatar" onError={(e) => e.target.src='/assets/Mainimg/hero-bg.jpg'} />
-                <h3 className="podium-name"><Link to={`/member/${top3[0].id}`} className="profile-link">{top3[0].name}</Link></h3>
-                <div className="podium-score">{getScoreDisplay(top3[0])}</div>
-              </div>
-            )}
-
-            {/* Rank 3 */}
-            {top3[2] && (
-              <div className="podium-card rank-3">
-                <div className="podium-badge">#3</div>
-                <img src={`/assets/member/${top3[2].image_filename}`} alt={top3[2].name} className="podium-avatar" onError={(e) => e.target.src='/assets/Mainimg/hero-bg.jpg'} />
-                <h3 className="podium-name"><Link to={`/member/${top3[2].id}`} className="profile-link">{top3[2].name}</Link></h3>
-                <div className="podium-score">{getScoreDisplay(top3[2])}</div>
-              </div>
-            )}
-          </div>
-
-          {rest.length > 0 && (
-            <div className="lb-list lb-anim">
-              {rest.map((member, idx) => (
-                <div key={member.id} className="lb-row">
-                  <div className="row-rank">#{idx + 4}</div>
+        {/* Right Column: Full Leaderboard List */}
+        <div className="bento-lb-list bento-box lb-anim">
+          {sortedData.length > 0 ? (
+            sortedData.map((member, idx) => {
+              const rank = idx + 1;
+              return (
+                <div key={member.id} className={`lb-row rank-${rank}`}>
+                  <div className="row-rank">#{rank}</div>
                   <img src={`/assets/member/${member.image_filename}`} alt={member.name} className="row-avatar" onError={(e) => e.target.src='/assets/Mainimg/hero-bg.jpg'} />
-                  <Link to={`/member/${member.id}`} className="row-name profile-link">{member.name}</Link>
+                  <Link to={`/members#member-${member.id}`} className="row-name profile-link">{member.name}</Link>
                   <div className="row-score">{getScoreDisplay(member)}</div>
                 </div>
-              ))}
-            </div>
+              );
+            })
+          ) : (
+            <div style={{textAlign: 'center', opacity: 0.5, marginTop: '2rem'}}>No more members</div>
           )}
-
-        </section>
-      </div>
-
-      {showStickyFooter && (
-        <div className="lb-sticky-footer">
-          <div className="lb-footer-content">
-            <div className="sf-left">
-              <span className="sf-label">Your Rank</span>
-              <span className="sf-rank">#{currentUserRank}</span>
-              <span className="sf-name">{currentUser.name}</span>
-            </div>
-            <div className="sf-score">{getScoreDisplay(sortedData[currentUserIndex])}</div>
-          </div>
         </div>
-      )}
 
-      <Footer />
+      </div>
     </div>
   );
 }

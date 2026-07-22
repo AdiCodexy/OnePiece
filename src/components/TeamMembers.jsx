@@ -85,7 +85,7 @@ export default function TeamMembers() {
           const stars = getHonorStars(member.id);
           
           return (
-            <Link to={`/member/${member.id}`} key={member.id} className={`tm-row ${isEven ? 'tm-row-reverse' : ''}`}>
+            <Link to={`/members#member-${member.id}`} key={member.id} className={`tm-row ${isEven ? 'tm-row-reverse' : ''}`}>
               <div className="tm-image-col">
                 <div className="tm-image-wrapper">
                   <img src={`/assets/member/${member.image_filename}`} alt={member.name} className="tm-image" />

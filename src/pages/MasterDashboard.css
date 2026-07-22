@@ -1,0 +1,16 @@
+/* src/pages/MasterDashboard.css */
+
+.master-dashboard-container {
+  width: 100vw;
+  background: #000000;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Add a bit of space between sections so they look cohesive when scrolling */
+.master-section {
+  position: relative;
+  width: 100%;
+}
