@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ViolenceDistrictPage.css';
-import { fetchMembers, saveGameStateToDB, loadGameStateFromDB, VISITOR_USER } from '../lib/supabase';
+import { fetchMembers, VISITOR_USER } from '../lib/supabase';
 
 export default function ViolenceDistrictPage() {
   const [isDayPhase, setIsDayPhase] = useState(true);
