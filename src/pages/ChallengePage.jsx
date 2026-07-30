@@ -6,7 +6,8 @@ import {
   fetchDailyLogs,
   updateMemberGoal,
   logDailyHours,
-  getTodayDateStr
+  getTodayDateStr,
+  VISITOR_USER
 } from '../lib/supabase';
 import TextPressure from '../components/TextPressure';
 import LoadingSkeleton from '../components/LoadingSkeleton';
@@ -41,8 +42,12 @@ export default function ChallengePage() {
       setLogs(l);
       if (m.length > 0) {
         const savedId = localStorage.getItem('testingUserId');
-        const found = savedId ? m.find(mem => mem.id === parseInt(savedId)) : null;
-        setCurrentUser(found || m[0]);
+        if (savedId === '9999') {
+          setCurrentUser(VISITOR_USER);
+        } else {
+          const found = savedId ? m.find(mem => mem.id === parseInt(savedId)) : null;
+          setCurrentUser(found || m[0]);
+        }
       } else {
         setCurrentUser('empty');
       }

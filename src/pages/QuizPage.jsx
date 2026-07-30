@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchMembers, getBestQuizAttempt, saveQuizAttempt, generateQuiz, fetchDailyLogs, getTodayDateStr } from '../lib/supabase';
+import { fetchMembers, getBestQuizAttempt, saveQuizAttempt, generateQuiz, fetchDailyLogs, getTodayDateStr, VISITOR_USER } from '../lib/supabase';
 import TextPressure from '../components/TextPressure';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import gsap from 'gsap';
@@ -37,9 +37,12 @@ export default function QuizPage() {
       setMembers(m);
       if (m.length > 0) {
         const savedId = localStorage.getItem('testingUserId');
-        const found = savedId ? m.find(mem => mem.id === parseInt(savedId)) : null;
-        const user = found || m[0];
-        setCurrentUser(user);
+        if (savedId === '9999') {
+          setCurrentUser(VISITOR_USER);
+        } else {
+          const found = savedId ? m.find(mem => mem.id === parseInt(savedId)) : null;
+          setCurrentUser(found || m[0]);
+        }
 
         // Lock/unlock check
         const logs = await fetchDailyLogs();

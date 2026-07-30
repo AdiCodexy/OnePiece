@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ViolenceDistrictPage.css';
-import { fetchMembers } from '../lib/supabase';
+import { fetchMembers, saveGameStateToDB, loadGameStateFromDB, VISITOR_USER } from '../lib/supabase';
 
 export default function ViolenceDistrictPage() {
   const [isDayPhase, setIsDayPhase] = useState(true);
@@ -94,8 +94,13 @@ export default function ViolenceDistrictPage() {
       const m = await fetchMembers();
       if (m.length > 0) {
         const savedId = localStorage.getItem('testingUserId');
-        const found = savedId ? m.find(mem => mem.id === parseInt(savedId)) : null;
-        const user = found || m[0];
+        let user;
+        if (savedId === '9999') {
+          user = VISITOR_USER;
+        } else {
+          const found = savedId ? m.find(mem => mem.id === parseInt(savedId)) : null;
+          user = found || m[0];
+        }
         setCurrentUser(user);
         if (user.name?.toUpperCase() === 'CARROT') {
           setUserRole('Admin');

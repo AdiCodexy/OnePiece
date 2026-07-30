@@ -463,18 +463,20 @@ export async function generateQuiz(subjects, hobbies, studyNotes) {
   ];
 }
 
+export const VISITOR_USER = {
+  id: 9999,
+  name: 'Visitor',
+  bio: 'Just looking around. Can look but cannot touch.',
+  hobbies: 'Observing',
+  subjects: 'Surveillance',
+  image_filename: 'hero-bg.jpg',
+  access_code: '0000',
+  is_visitor: true
+};
+
 export async function authenticateWithCode(code) {
   if (code === '0000') {
-    return {
-      id: 9999,
-      name: 'Visitor',
-      bio: 'Just looking around. Can look but cannot touch.',
-      hobbies: 'Observing',
-      subjects: 'Surveillance',
-      image_filename: 'hero-bg.jpg',
-      access_code: '0000',
-      is_visitor: true
-    };
+    return VISITOR_USER;
   }
 
   if (supabase) {
