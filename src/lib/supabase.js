@@ -17,6 +17,7 @@ export const mockMembers = [
     hobbies: 'Eating, Adventuring, Sleeping',
     subjects: 'Leadership, Brawling',
     image_filename: 'Luffy.jpg',
+    access_code: '1111',
     banner_filename: null
   },
   {
@@ -26,6 +27,7 @@ export const mockMembers = [
     hobbies: 'Training, Drinking, Getting lost',
     subjects: 'Swordsmanship, Navigation (Failed)',
     image_filename: 'Zoro.jpg',
+    access_code: '2222',
     banner_filename: null
   },
   {
@@ -35,6 +37,7 @@ export const mockMembers = [
     hobbies: 'Journaling, Combat Training',
     subjects: 'Wano History, Mythology',
     image_filename: 'Yamato.jpg',
+    access_code: '3333',
     banner_filename: null
   },
   {
@@ -44,6 +47,7 @@ export const mockMembers = [
     hobbies: 'Jumping, Chewing carrots',
     subjects: 'Reconnaissance, Electro combat',
     image_filename: 'Carrot.jpg',
+    access_code: '4444',
     banner_filename: null
   },
   {
@@ -53,6 +57,7 @@ export const mockMembers = [
     hobbies: 'Marksmanship, Strategy games',
     subjects: 'Ballistics, Tactics',
     image_filename: 'Gunko.jpg',
+    access_code: '5555',
     fleet_id: null,
     banner_filename: null
   },
@@ -63,6 +68,7 @@ export const mockMembers = [
     hobbies: 'Extortion, Swimming, Plotting',
     subjects: 'Fish-man Karate, Naval Strategy',
     image_filename: 'Arlong.jpg',
+    access_code: '6666',
     banner_filename: null
   },
   {
@@ -72,6 +78,7 @@ export const mockMembers = [
     hobbies: 'Smoking, Strategy, Drinking',
     subjects: 'Marksmanship, Observation Haki',
     image_filename: 'Beckman.jpg',
+    access_code: '7777',
     banner_filename: null
   },
   {
@@ -81,6 +88,7 @@ export const mockMembers = [
     hobbies: 'Looking East, Revolution',
     subjects: 'Geopolitics, Advanced Haki',
     image_filename: 'Dragon.jpg',
+    access_code: '8888',
     banner_filename: null
   },
   {
@@ -90,6 +98,7 @@ export const mockMembers = [
     hobbies: 'Partying, Sleeping, Peacekeeping',
     subjects: "Conqueror's Haki, Swordsmanship",
     image_filename: 'Shanks.jpg',
+    access_code: '9999',
     banner_filename: null
   },
   {
@@ -99,6 +108,7 @@ export const mockMembers = [
     hobbies: 'Puppeteering, Laughing, Business',
     subjects: 'Underworld Economics, Awakening',
     image_filename: 'Doflamingo.jpg',
+    access_code: '1010',
     banner_filename: null
   },
   {
@@ -108,6 +118,7 @@ export const mockMembers = [
     hobbies: 'Protecting Animals, Waiting',
     subjects: 'Island Ecology, Marksmanship',
     image_filename: 'GAIMON.jpg',
+    access_code: '1212',
     banner_filename: null
   },
   {
@@ -117,6 +128,7 @@ export const mockMembers = [
     hobbies: 'Training, Justice, Swimming',
     subjects: 'Rokushiki, Observation Haki',
     image_filename: 'Koby.jpg',
+    access_code: '1313',
     banner_filename: null
   }
 ];
@@ -225,34 +237,58 @@ const getDaysAgoStr = (days) => {
   return d.toISOString().split('T')[0];
 };
 
-let mockDailyLogs = [
-  // pre-populate some data for Luffy (id: 1) and Zoro (id: 2)
-  { member_id: 1, date: getDaysAgoStr(1), hours: 6, goal_met: true, notes: '- Navigation basics\n- Leadership skills\n- Advanced meat eating' },
-  { member_id: 1, date: getDaysAgoStr(2), hours: 5, goal_met: true, notes: '- Meat eating competition strategies' },
-  { member_id: 1, date: getTodayDateStr(), hours: 8, goal_met: true, notes: '- Haki training\n- Gear 5 visualization\n- Pirate King philosophy' },
-  { member_id: 2, date: getDaysAgoStr(1), hours: 7, goal_met: true, notes: '- Sword training' },
-  { member_id: 3, date: getDaysAgoStr(1), hours: 2, goal_met: false, notes: '- Wano history' },
-  // Gunko (id: 5) logged today
-  { member_id: 5, date: getTodayDateStr(), hours: 5, goal_met: true, notes: '- Marksmanship drills' },
-];
+let mockDailyLogs = [];
 
 export async function fetchMemberGoals() {
+  const saved = localStorage.getItem('op_member_goals');
+  if (saved) return JSON.parse(saved);
   return { ...mockGoals };
 }
 
 export async function updateMemberGoal(memberId, newGoal) {
-  mockGoals[memberId] = newGoal;
-  return mockGoals[memberId];
+  const currentGoals = await fetchMemberGoals();
+  currentGoals[memberId] = newGoal;
+  localStorage.setItem('op_member_goals', JSON.stringify(currentGoals));
+  return currentGoals[memberId];
 }
 
 export async function fetchDailyLogs() {
+  if (supabase) {
+    const { data, error } = await supabase.from('daily_logs').select('*');
+    if (!error && data) return data;
+  }
   return [...mockDailyLogs];
 }
 
 export async function logDailyHours(memberId, dateStr, hours, goal, notes = '') {
   const goalMet = hours >= goal;
-  const existingLogIndex = mockDailyLogs.findIndex(log => log.member_id === memberId && log.date === dateStr);
+  if (supabase) {
+    const { data: existing } = await supabase
+      .from('daily_logs')
+      .select('id')
+      .eq('member_id', memberId)
+      .eq('date', dateStr)
+      .maybeSingle();
 
+    if (existing) {
+      const { data } = await supabase
+        .from('daily_logs')
+        .update({ hours, goal_met: goalMet, notes })
+        .eq('id', existing.id)
+        .select()
+        .single();
+      return data;
+    } else {
+      const { data } = await supabase
+        .from('daily_logs')
+        .insert({ member_id: memberId, date: dateStr, hours, goal_met: goalMet, notes })
+        .select()
+        .single();
+      return data;
+    }
+  }
+
+  const existingLogIndex = mockDailyLogs.findIndex(log => log.member_id === memberId && log.date === dateStr);
   const updatedLog = { member_id: memberId, date: dateStr, hours, goal_met: goalMet, notes };
 
   if (existingLogIndex >= 0) {
@@ -268,13 +304,21 @@ export async function logDailyHours(memberId, dateStr, hours, goal, notes = '') 
 // QUIZ FEATURE MOCKS
 // ----------------------------------------
 
-let mockQuizAttempts = [
-  // pre-populate for Luffy
-  { id: 1, member_id: 1, date: getDaysAgoStr(1), score: 6, time_taken_seconds: 45 },
-  { id: 2, member_id: 1, date: getDaysAgoStr(0), score: 8, time_taken_seconds: 52 },
-];
+let mockQuizAttempts = [];
 
 export async function getBestQuizAttempt(memberId) {
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .select('*')
+      .eq('member_id', memberId)
+      .order('score', { ascending: false })
+      .order('time_taken_seconds', { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    if (!error && data) return data;
+  }
+
   const memberAttempts = mockQuizAttempts.filter(a => a.member_id === memberId);
   if (memberAttempts.length === 0) return null;
   // Sort by highest score, then by fastest time
@@ -286,10 +330,22 @@ export async function getBestQuizAttempt(memberId) {
 }
 
 export async function fetchAllQuizAttempts() {
+  if (supabase) {
+    const { data, error } = await supabase.from('quiz_attempts').select('*');
+    if (!error && data) return data;
+  }
   return [...mockQuizAttempts];
 }
 
 export async function saveQuizAttempt(memberId, score, timeTakenSeconds) {
+  if (supabase) {
+    const { data } = await supabase
+      .from('quiz_attempts')
+      .insert({ member_id: memberId, date: getTodayDateStr(), score, time_taken_seconds: timeTakenSeconds })
+      .select()
+      .single();
+    if (data) return data;
+  }
   const newAttempt = {
     id: Date.now(),
     member_id: memberId,
@@ -302,6 +358,41 @@ export async function saveQuizAttempt(memberId, score, timeTakenSeconds) {
 }
 
 export async function generateQuiz(subjects, hobbies, studyNotes) {
+  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+  if (GEMINI_API_KEY) {
+    try {
+      const prompt = `You are a strict teacher. Create a difficult, 10-question multiple-choice quiz based strictly on the following study notes provided by the student: "${studyNotes}".
+      If the notes are vague, infer the domain and make the questions difficult.
+      Return the output as a raw JSON array of 10 objects, where each object has:
+      - "question" (string)
+      - "options" (array of 4 strings)
+      - "correctIndex" (integer 0-3)
+      Do not include markdown blocks, just return the raw JSON array.`;
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { response_mime_type: "application/json" }
+        })
+      });
+
+      const json = await response.json();
+      if (json.candidates && json.candidates[0].content.parts[0].text) {
+        let text = json.candidates[0].content.parts[0].text;
+        text = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+        const parsed = JSON.parse(text);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.error("Gemini API failed, falling back to mock", e);
+    }
+  }
+
   if (supabase) {
     try {
       const { data, error } = await supabase.functions.invoke('generate-quiz', {
@@ -370,4 +461,19 @@ export async function generateQuiz(subjects, hobbies, studyNotes) {
       correctIndex: 1
     }
   ];
+}
+
+export async function authenticateWithCode(code) {
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('members')
+      .select('*')
+      .eq('access_code', code)
+      .single();
+    if (!error && data) return data;
+  }
+  
+  // Mock fallback
+  const found = mockMembers.find(m => m.access_code === code);
+  return found || null;
 }

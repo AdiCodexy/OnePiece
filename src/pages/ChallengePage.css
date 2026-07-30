@@ -3,8 +3,8 @@
 .challenge-page-container {
   width: 100vw;
   height: 100vh;
-  background: #000000; /* Pure black page background */
-  color: #000; /* Default text inside boxes will be black now */
+  background: #000000;
+  color: #000;
   font-family: 'Inter', sans-serif;
   overflow: hidden; 
   box-sizing: border-box;
@@ -20,6 +20,19 @@
   max-width: 1600px;
   margin: 0 auto;
   box-sizing: border-box;
+}
+
+/* Center column wrapper - scrollable container for study log + history */
+.bento-center-column {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.2) transparent;
 }
 
 /* Base Bento Box */
@@ -257,14 +270,11 @@
 /* Study Log Area (Center Column)        */
 /* ------------------------------------- */
 .bento-study-log {
-  grid-column: 2;
-  grid-row: 2;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  min-height: 0;
+  flex-shrink: 0;
   padding: 2rem;
-  background: #f4e8c1; /* Rich beige/vanilla */
+  background: #f4e8c1;
   border-radius: 24px;
 }
 
@@ -375,6 +385,225 @@
   font-size: 14px;
   font-style: italic;
   padding: 2rem;
+}
+
+/* ------------------------------------- */
+/* Hours History Section                 */
+/* ------------------------------------- */
+.bento-hours-history {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 24px;
+}
+
+.hh-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding-bottom: 1rem;
+}
+
+.hh-subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #888;
+  font-weight: 500;
+}
+
+.hh-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Each day block */
+.hh-day-block {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.hh-day-block:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.hh-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #f8f8f8;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.hh-day-date {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hh-date-label {
+  font-size: 16px;
+  font-weight: 800;
+  color: #000;
+}
+
+.hh-date-full {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #999;
+}
+
+.hh-day-stats {
+  display: flex;
+  gap: 1.2rem;
+}
+
+.hh-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.hh-stat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 800;
+  color: #000;
+}
+
+.hh-stat-num.all-met {
+  color: #22c55e;
+}
+
+.hh-stat-label {
+  font-size: 10px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Member rows inside a day */
+.hh-day-members {
+  display: flex;
+  flex-direction: column;
+}
+
+.hh-member-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  transition: background 0.2s ease;
+}
+
+.hh-member-row:last-child {
+  border-bottom: none;
+}
+
+.hh-member-row:hover {
+  background: rgba(0,0,0,0.02);
+}
+
+.hh-member-row.goal-met {
+  border-left: 3px solid #22c55e;
+}
+
+.hh-member-row.goal-missed {
+  border-left: 3px solid #ef4444;
+}
+
+.hh-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+  flex-shrink: 0;
+}
+
+.hh-member-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.hh-member-top {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.hh-member-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000;
+}
+
+.hh-member-hours {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #555;
+  font-weight: 600;
+}
+
+.hh-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+}
+
+.hh-badge.met {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.hh-badge.missed {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.hh-progress-bar-bg {
+  width: 100%;
+  height: 5px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.hh-progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.hh-progress-bar-fill.fill-met {
+  background: #22c55e;
+}
+
+.hh-progress-bar-fill.fill-missed {
+  background: #ef4444;
+}
+
+.hh-member-notes {
+  font-size: 12px;
+  color: #777;
+  line-height: 1.4;
+  white-space: pre-wrap;
 }
 
 /* ------------------------------------- */

@@ -6,6 +6,7 @@ import '../styles/menu.css';
 
 const SideMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const containerRef = useRef(null);
   const layer1Ref = useRef(null);
@@ -89,6 +90,13 @@ const SideMenu = () => {
     }
   };
 
+  const handleLogout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem('testingUserId');
+    toggleMenu();
+    navigate('/login');
+  };
+
   return (
     <>
       <button className="mobile-menu-btn" onClick={toggleMenu}>
@@ -137,6 +145,16 @@ const SideMenu = () => {
                 <span className="menu-text">Crew</span>
               </div>
             </Link>
+            <Link to="/violence" className="menu-item" onClick={toggleMenu}>
+              <div className="menu-text-wrap">
+                <span className="menu-text" style={{ color: '#ff3333' }}>Violence</span>
+              </div>
+            </Link>
+            <a href="#" className="menu-item" onClick={handleLogout} style={{ marginTop: '2rem' }}>
+              <div className="menu-text-wrap">
+                <span className="menu-text" style={{ fontSize: '1rem', color: '#666' }}>LOG OUT</span>
+              </div>
+            </a>
           </nav>
         </div>
       </div>

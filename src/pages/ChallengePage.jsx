@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   fetchMembers,
@@ -43,6 +43,8 @@ export default function ChallengePage() {
         const savedId = localStorage.getItem('testingUserId');
         const found = savedId ? m.find(mem => mem.id === parseInt(savedId)) : null;
         setCurrentUser(found || m[0]);
+      } else {
+        setCurrentUser('empty');
       }
     }
     loadData();
@@ -67,6 +69,24 @@ export default function ChallengePage() {
     );
   }, { scope: containerRef });
 
+  // Compute today's date string early (needed by useMemo)
+  const todayStr = getTodayDateStr();
+
+  // Group ALL logs by date for the hours history section
+  // Must be before early returns to respect React hooks rules
+  const hoursHistory = useMemo(() => {
+    const grouped = {};
+    logs.forEach(log => {
+      if (!grouped[log.date]) grouped[log.date] = [];
+      grouped[log.date].push(log);
+    });
+    // Sort dates descending (most recent first), exclude today since it's shown above
+    return Object.entries(grouped)
+      .filter(([date]) => date !== todayStr)
+      .sort(([a], [b]) => new Date(b) - new Date(a));
+  }, [logs, todayStr]);
+
+  if (currentUser === 'empty') return <div style={{padding: '5rem', textAlign: 'center', color: '#000', fontFamily: 'Inter'}}>Error: No members found in database. Please run the SQL INSERT statements!</div>;
   if (!currentUser) return <LoadingSkeleton />;
 
   // Helper: Get Streak
@@ -124,7 +144,6 @@ export default function ChallengePage() {
 
   // Derive current user data
   const currentUserGoal = goals[currentUser.id] || 0;
-  const todayStr = getTodayDateStr();
   const currentUserTodayLog = logs.find(l => l.member_id === currentUser.id && l.date === todayStr);
   const currentUserTodayHours = currentUserTodayLog ? currentUserTodayLog.hours : 0;
   const currentUserStreak = getStreak(currentUser.id);
@@ -143,6 +162,15 @@ export default function ChallengePage() {
       };
     })
     .sort((a, b) => b.streak - a.streak);
+
+  const formatDateLabel = (dateStr) => {
+    const date = new Date(dateStr + 'T00:00:00');
+    const today = new Date(todayStr + 'T00:00:00');
+    const diffDays = Math.round((today - date) / (1000 * 60 * 60 * 24));
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  };
 
   return (
     <div ref={containerRef} className="challenge-page-container">
@@ -219,61 +247,134 @@ export default function ChallengePage() {
           </div>
         </div>
 
-        {/* Bento Study Log */}
-        <div className="bento-study-log bento-box chal-anim">
-          <div className="study-log-header">
-            <span className="eyebrow">TODAY'S STUDY LOG</span>
-            <select
-              className="log-filter-select"
-              value={selectedLogUserId}
-              onChange={(e) => setSelectedLogUserId(e.target.value === 'ALL' ? 'ALL' : (e.target.value === 'CURRENT' ? 'CURRENT' : parseInt(e.target.value)))}
-            >
-              <option value="CURRENT">My Logs</option>
-              <option value="ALL">All Members</option>
-              {members.filter(m => m.id !== currentUser.id).map(m => (
-                <option key={m.id} value={m.id}>{m.name}'s Logs</option>
-              ))}
-            </select>
-          </div>
-          <div className="study-log-feed">
-            {(() => {
-              const activeLogUserId = selectedLogUserId === 'CURRENT' ? currentUser.id : selectedLogUserId;
-              const filteredLogs = logs.filter(l => l.date === todayStr && (selectedLogUserId === 'ALL' || l.member_id === activeLogUserId));
+        {/* Center Column - scrollable container for study log + history */}
+        <div className="bento-center-column">
 
-              if (filteredLogs.length === 0) {
-                return <div className="sl-empty">No one has logged their study today yet. Be the first!</div>;
-              }
+          {/* Bento Study Log */}
+          <div className="bento-study-log bento-box chal-anim">
+            <div className="study-log-header">
+              <span className="eyebrow">TODAY'S STUDY LOG</span>
+              <select
+                className="log-filter-select"
+                value={selectedLogUserId}
+                onChange={(e) => setSelectedLogUserId(e.target.value === 'ALL' ? 'ALL' : (e.target.value === 'CURRENT' ? 'CURRENT' : parseInt(e.target.value)))}
+              >
+                <option value="CURRENT">My Logs</option>
+                <option value="ALL">All Members</option>
+                {members.filter(m => m.id !== currentUser.id).map(m => (
+                  <option key={m.id} value={m.id}>{m.name}'s Logs</option>
+                ))}
+              </select>
+            </div>
+            <div className="study-log-feed">
+              {(() => {
+                const activeLogUserId = selectedLogUserId === 'CURRENT' ? currentUser.id : selectedLogUserId;
+                const filteredLogs = logs.filter(l => l.date === todayStr && (selectedLogUserId === 'ALL' || l.member_id === activeLogUserId));
 
-              return filteredLogs.map((log, idx) => {
-                const mem = members.find(m => m.id === log.member_id);
-                if (!mem) return null;
-                return (
-                  <div key={idx} className="study-log-item">
-                    <img src={`/assets/member/${mem.image_filename}`} alt={mem.name} className="sl-avatar" onError={(e) => e.target.src = '/assets/Mainimg/hero-bg.jpg'} />
-                    <div className="sl-content">
-                      <div className="sl-header">
-                        <span className="sl-name">{mem.name}</span>
-                        <span className="sl-hours">{log.hours} hrs</span>
-                      </div>
-                      <div className="sl-notes">
-                        {log.notes ? (
-                          <ul className="sl-notes-list">
-                            {log.notes.split('\n').map((note, i) => {
-                              const cleanNote = note.replace(/^-/, '').trim();
-                              if (!cleanNote) return null;
-                              return <li key={i}>{cleanNote}</li>;
-                            })}
-                          </ul>
-                        ) : (
-                          "No notes provided"
-                        )}
+                if (filteredLogs.length === 0) {
+                  return <div className="sl-empty">No one has logged their study today yet. Be the first!</div>;
+                }
+
+                return filteredLogs.map((log, idx) => {
+                  const mem = members.find(m => m.id === log.member_id);
+                  if (!mem) return null;
+                  return (
+                    <div key={idx} className="study-log-item">
+                      <img src={`/assets/member/${mem.image_filename}`} alt={mem.name} className="sl-avatar" onError={(e) => e.target.src = '/assets/Mainimg/hero-bg.jpg'} />
+                      <div className="sl-content">
+                        <div className="sl-header">
+                          <span className="sl-name">{mem.name}</span>
+                          <span className="sl-hours">{log.hours} hrs</span>
+                        </div>
+                        <div className="sl-notes">
+                          {log.notes ? (
+                            <ul className="sl-notes-list">
+                              {log.notes.split('\n').map((note, i) => {
+                                const cleanNote = note.replace(/^-/, '').trim();
+                                if (!cleanNote) return null;
+                                return <li key={i}>{cleanNote}</li>;
+                              })}
+                            </ul>
+                          ) : (
+                            "No notes provided"
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              });
-            })()}
+                  );
+                });
+              })()}
+            </div>
           </div>
+
+          {/* Hours History - Past Days */}
+          <div className="bento-hours-history bento-box chal-anim">
+            <div className="hh-header">
+              <span className="eyebrow">HOURS HISTORY</span>
+              <span className="hh-subtitle">{hoursHistory.length} past day{hoursHistory.length !== 1 ? 's' : ''} logged</span>
+            </div>
+            <div className="hh-timeline">
+              {hoursHistory.length === 0 ? (
+                <div className="sl-empty">No past logs yet. Start logging daily to build your history!</div>
+              ) : (
+                hoursHistory.map(([date, dayLogs]) => {
+                  const totalHours = dayLogs.reduce((sum, l) => sum + l.hours, 0);
+                  const goalMetCount = dayLogs.filter(l => l.goal_met).length;
+                  return (
+                    <div key={date} className="hh-day-block">
+                      <div className="hh-day-header">
+                        <div className="hh-day-date">
+                          <span className="hh-date-label">{formatDateLabel(date)}</span>
+                          <span className="hh-date-full">{date}</span>
+                        </div>
+                        <div className="hh-day-stats">
+                          <span className="hh-stat">
+                            <span className="hh-stat-num">{dayLogs.length}</span>
+                            <span className="hh-stat-label">logged</span>
+                          </span>
+                          <span className="hh-stat">
+                            <span className="hh-stat-num">{totalHours.toFixed(1)}h</span>
+                            <span className="hh-stat-label">total</span>
+                          </span>
+                          <span className="hh-stat">
+                            <span className={`hh-stat-num ${goalMetCount === dayLogs.length ? 'all-met' : ''}`}>{goalMetCount}/{dayLogs.length}</span>
+                            <span className="hh-stat-label">goals met</span>
+                          </span>
+                        </div>
+                      </div>
+                      <div className="hh-day-members">
+                        {dayLogs.map((log, idx) => {
+                          const mem = members.find(m => m.id === log.member_id);
+                          if (!mem) return null;
+                          const memberGoal = goals[mem.id] || 0;
+                          const pct = memberGoal > 0 ? Math.min((log.hours / memberGoal) * 100, 100) : 0;
+                          return (
+                            <div key={idx} className={`hh-member-row ${log.goal_met ? 'goal-met' : 'goal-missed'}`}>
+                              <img src={`/assets/member/${mem.image_filename}`} alt={mem.name} className="hh-avatar" onError={(e) => e.target.src = '/assets/Mainimg/hero-bg.jpg'} />
+                              <div className="hh-member-info">
+                                <div className="hh-member-top">
+                                  <span className="hh-member-name">{mem.name}</span>
+                                  <span className="hh-member-hours">{log.hours}h / {memberGoal}h</span>
+                                  <span className={`hh-badge ${log.goal_met ? 'met' : 'missed'}`}>{log.goal_met ? '✓ MET' : '✗ MISSED'}</span>
+                                </div>
+                                <div className="hh-progress-bar-bg">
+                                  <div className={`hh-progress-bar-fill ${log.goal_met ? 'fill-met' : 'fill-missed'}`} style={{ width: `${pct}%` }}></div>
+                                </div>
+                                {log.notes && (
+                                  <div className="hh-member-notes">{log.notes}</div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
         </div>
 
         {/* Bento Crew Progress List */}

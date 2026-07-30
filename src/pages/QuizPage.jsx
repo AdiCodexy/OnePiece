@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchMembers, getBestQuizAttempt, saveQuizAttempt, generateQuiz, fetchDailyLogs } from '../lib/supabase';
+import { fetchMembers, getBestQuizAttempt, saveQuizAttempt, generateQuiz, fetchDailyLogs, getTodayDateStr } from '../lib/supabase';
 import TextPressure from '../components/TextPressure';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import gsap from 'gsap';
@@ -23,6 +23,9 @@ export default function QuizPage() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [selectedOption, setSelectedOption] = useState(null);
   
+  const [canTakeQuiz, setCanTakeQuiz] = useState(false);
+  const [todaysNotes, setTodaysNotes] = useState("");
+  
   const containerRef = useRef();
   const heroRef = useRef();
   const timerRef = useRef(null);
@@ -35,7 +38,21 @@ export default function QuizPage() {
       if (m.length > 0) {
         const savedId = localStorage.getItem('testingUserId');
         const found = savedId ? m.find(mem => mem.id === parseInt(savedId)) : null;
-        setCurrentUser(found || m[0]);
+        const user = found || m[0];
+        setCurrentUser(user);
+
+        // Lock/unlock check
+        const logs = await fetchDailyLogs();
+        const todayStr = getTodayDateStr();
+        const todaysLog = logs.find(l => l.member_id === user.id && l.date === todayStr);
+        if (todaysLog && todaysLog.notes && todaysLog.notes.trim().length > 0) {
+          setCanTakeQuiz(true);
+          setTodaysNotes(todaysLog.notes.trim());
+        } else {
+          setCanTakeQuiz(false);
+        }
+      } else {
+        setCurrentUser('empty');
       }
     }
     loadData();
@@ -84,18 +101,13 @@ export default function QuizPage() {
     );
   }, { scope: containerRef });
 
+  if (currentUser === 'empty') return <div style={{padding: '5rem', textAlign: 'center', color: '#000', fontFamily: 'Inter'}}>Error: No members found in database.</div>;
   if (!currentUser) return <LoadingSkeleton />;
 
   const handleStart = async () => {
     setQuizState('loading');
 
-    // Compile recent study notes
-    const logs = await fetchDailyLogs();
-    const recentNotes = logs
-      .filter(l => l.member_id === currentUser.id && l.notes)
-      .map(l => l.notes.replace(/-/g, '').trim())
-      .join(', ');
-    const studyNotes = recentNotes || "General programming and Grand Line navigation";
+    const studyNotes = todaysNotes || "General programming and Grand Line navigation";
 
     const qs = await generateQuiz(currentUser.subjects, currentUser.hobbies, studyNotes);
     setQuestions(qs);
@@ -142,6 +154,21 @@ export default function QuizPage() {
     const subs = currentUser.subjects ? currentUser.subjects.split(',').map(s => s.trim()) : [];
     const hobs = currentUser.hobbies ? currentUser.hobbies.split(',').map(h => h.trim()) : [];
     return [...subs, ...hobs].filter(Boolean);
+  };
+
+  const formatText = (text) => {
+    if (typeof text !== 'string') return text;
+    const parts = text.split(/`([^`]+)`/);
+    return parts.map((part, i) => {
+      if (i % 2 === 1) {
+        return (
+          <code key={i} style={{ backgroundColor: '#e5e7eb', padding: '2px 6px', borderRadius: '4px', fontFamily: 'JetBrains Mono, monospace', fontSize: '0.9em', color: '#be123c', margin: '0 2px' }}>
+            {part}
+          </code>
+        );
+      }
+      return <span key={i}>{part}</span>;
+    });
   };
 
   return (
@@ -192,8 +219,20 @@ export default function QuizPage() {
           {quizState === 'pre' && (
             <div className="pre-quiz-state">
               <h1 className="pre-quiz-title">Ready for the challenge?</h1>
-              <p style={{fontFamily: 'Inter', color: '#555', fontSize: '18px'}}>Test your knowledge on your selected subjects and hobbies.</p>
-              <button className="pq-btn" onClick={handleStart}>Start Quiz</button>
+              {canTakeQuiz ? (
+                <>
+                  <p style={{fontFamily: 'Inter', color: '#555', fontSize: '18px'}}>Test your knowledge on what you just studied!</p>
+                  <button className="pq-btn" onClick={handleStart}>Start Quiz</button>
+                </>
+              ) : (
+                <>
+                  <p style={{fontFamily: 'Inter', color: '#ff3333', fontSize: '16px', fontWeight: 'bold'}}>
+                    You must log your study hours with notes on the Dashboard for today to unlock the daily quiz!
+                  </p>
+                  <button className="pq-btn" disabled style={{opacity: 0.5, cursor: 'not-allowed'}}>Locked</button>
+                  <Link to="/" style={{display: 'block', marginTop: '1rem', color: '#000', fontWeight: 'bold', textDecoration: 'underline'}}>Go to Dashboard</Link>
+                </>
+              )}
             </div>
           )}
 
@@ -210,7 +249,7 @@ export default function QuizPage() {
                 <div className={`aq-timer ${timeLeft <= 10 ? 'urgent' : ''}`}>0:{timeLeft.toString().padStart(2, '0')}</div>
               </div>
               <div className="aq-question">
-                {questions[currentQIndex].question}
+                {formatText(questions[currentQIndex].question)}
               </div>
               <div className="aq-options">
                 {questions[currentQIndex].options.map((opt, i) => {
@@ -226,7 +265,7 @@ export default function QuizPage() {
                       onClick={() => handleOptionSelect(i)}
                       disabled={selectedOption !== null}
                     >
-                      {opt}
+                      {formatText(opt)}
                     </button>
                   );
                 })}

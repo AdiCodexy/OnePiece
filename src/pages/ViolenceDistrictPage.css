@@ -1,0 +1,491 @@
+/* Container & Base Styles */
+.vd-container {
+  background-color: #0f0f0f;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
+  transition: background-color 1s ease;
+}
+
+.vd-night-mode {
+  background-color: #050505; /* Slightly darker for night mode base */
+}
+
+.vd-content-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Reusable Card */
+.vd-card {
+  background-color: #F5EEDB; /* Primary Cream/Beige */
+  color: #111111; /* Dark charcoal/black for text on cream */
+  border-radius: 32px; /* Generous border radius */
+  padding: 2.5rem;
+  border: none;
+}
+
+/* Header Section */
+.vd-header {
+  background-color: #F5EEDB; /* Cream colored */
+  color: #111111;
+  text-align: center;
+  padding: 1.5rem 3rem;
+  border-radius: 9999px; /* Pill shape */
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+
+.vd-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 900;
+  font-family: sans-serif;
+  letter-spacing: 0.25em; /* tracking-widest */
+  text-transform: uppercase;
+  color: #111111 !important; /* Enforce dark contrast */
+}
+
+/* --- Banner States & Animations --- */
+@keyframes pulse-night {
+  0% { box-shadow: 0 0 15px rgba(139, 0, 0, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(139, 0, 0, 0.8); }
+  100% { box-shadow: 0 0 15px rgba(139, 0, 0, 0.3); }
+}
+
+.vd-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  transition: all 1s ease; /* Smooth transition between day and night */
+}
+
+.vd-banner-day {
+  background-color: #F5EEDB; /* Bright cream background */
+  color: #111111;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+}
+
+.vd-banner-night {
+  background-color: #0f172a; /* Dark navy background */
+  color: #ffffff;
+  animation: pulse-night 3s infinite ease-in-out;
+  border: 1px solid rgba(139, 0, 0, 0.4);
+}
+
+.vd-banner-info h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  color: inherit;
+}
+
+.vd-banner-info p {
+  margin: 0.5rem 0 0;
+  opacity: 0.8;
+  font-size: 1.2rem;
+  color: inherit;
+}
+
+.vd-banner-timer span {
+  font-size: 3.5rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+}
+
+.vd-text-dark {
+  color: #111111;
+}
+
+.vd-text-light {
+  color: #F5EEDB;
+}
+
+/* Bento Grid */
+.vd-bento-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: auto auto;
+  gap: 2rem;
+}
+
+/* My Role Card (Accent Card) */
+.vd-my-role {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  display: flex;
+  flex-direction: column;
+  background-color: #8b0000; /* Deep crimson red */
+  color: #ffffff; /* Crisp white */
+}
+
+.vd-my-role h3 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  border-bottom: 2px solid rgba(255,255,255,0.2);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.vd-role-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.vd-avatar-placeholder {
+  width: 140px;
+  height: 140px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  padding: 8px;
+  border: 4px solid #F5EEDB; /* Cream border */
+}
+
+.vd-avatar-placeholder img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.vd-role-text h4 {
+  font-size: 2.2rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.vd-role-text p {
+  line-height: 1.6;
+  opacity: 0.8;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* Council Grid */
+.vd-council {
+  grid-column: 2 / 3;
+  grid-row: 1 / 3; /* Spans across two rows */
+}
+
+.vd-council h3 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.vd-players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1.5rem;
+}
+
+/* --- Player Hover & Disabled States --- */
+.vd-player-card {
+  background-color: rgba(0,0,0,0.05);
+  border-radius: 24px;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease; /* Smooth transition-all duration-300 */
+}
+
+.vd-player-card:hover:not(.vd-player-dead) {
+  transform: translateY(-8px); /* Lift */
+  background-color: rgba(0,0,0,0.08);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15); /* Soft shadow */
+}
+
+.vd-player-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #333;
+  transition: filter 0.3s ease;
+}
+
+.vd-player-name {
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+  color: #111111;
+  transition: all 0.3s ease;
+}
+
+/* Dead State */
+.vd-player-dead {
+  opacity: 0.6;
+  pointer-events: none; /* Disable hovering */
+}
+
+.vd-player-dead .vd-player-avatar {
+  filter: grayscale(100%);
+}
+
+.vd-player-dead .vd-player-name {
+  text-decoration: line-through;
+  text-decoration-color: #8b0000;
+  text-decoration-thickness: 2px;
+  color: #777; /* Dim text */
+}
+
+/* --- Role Specific Action Buttons --- */
+.vd-vote-btn {
+  background-color: #d35400; /* Burnt orange pill button */
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 9999px; /* Pill */
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease; /* smooth hover */
+}
+
+.vd-vote-btn:not(.vd-btn-disabled):hover {
+  background-color: #e67e22;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(211, 84, 0, 0.4);
+}
+
+.vd-btn-assassinate {
+  background-color: #8b0000; /* Deep crimson */
+}
+.vd-btn-assassinate:hover {
+  background-color: #aa0000;
+  box-shadow: 0 4px 10px rgba(139, 0, 0, 0.4);
+}
+
+.vd-btn-reveal {
+  background-color: #2f4f4f; /* Muted forest green */
+}
+.vd-btn-reveal:hover {
+  background-color: #3a6262;
+  box-shadow: 0 4px 10px rgba(47, 79, 79, 0.4);
+}
+
+.vd-btn-disabled {
+  background-color: #777;
+  cursor: not-allowed;
+  opacity: 0.8;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Role Reference Guide */
+.vd-role-guide {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+}
+
+.vd-role-guide h3 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.vd-dropdowns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.vd-dropdown {
+  background-color: rgba(0,0,0,0.05);
+  border-radius: 16px;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.2s;
+}
+
+.vd-dropdown:hover {
+  background-color: rgba(0,0,0,0.08);
+}
+
+.vd-dropdown summary {
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.8rem 0;
+  list-style: none; /* Hide default arrow */
+  display: flex;
+  align-items: center;
+}
+
+.vd-dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.vd-dropdown summary::before {
+  content: '▸';
+  margin-right: 0.8rem;
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+
+.vd-dropdown[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.vd-dropdown-content {
+  padding: 0.5rem 0 1rem 1.5rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+/* DEV CONTROLS for preview */
+.vd-dev-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 12px;
+  color: #fff;
+  border: 1px dashed rgba(255,255,255,0.2);
+}
+.vd-dev-controls label { display: flex; gap: 0.5rem; align-items: center; font-weight: 600; }
+.vd-dev-controls select, .vd-dev-controls button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.vd-dev-controls button:hover, .vd-dev-controls select:hover {
+  background: #222;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .vd-bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .vd-council, .vd-my-role, .vd-role-guide {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+}
+
+.vd-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2f4f4f; /* Greenish/dark color for toast, or could keep orange #d35400 */
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-weight: 800;
+  font-size: 1.2rem;
+  z-index: 9999;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from { top: -50px; opacity: 0; }
+  to { top: 20px; opacity: 1; }
+}
+
+/* --- Admin Controls & Role Badges --- */
+.vd-reset-btn {
+  background-color: #c0392b;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.vd-reset-btn:hover {
+  background-color: #e74c3c;
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
+}
+
+.vd-admin-role-badge {
+  background-color: #f39c12;
+  color: #111;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+/* --- Game History Action Log --- */
+.vd-history-log {
+  margin-top: 2rem;
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.vd-history-log h3 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  color: #111;
+}
+
+.vd-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 1rem;
+}
+
+.vd-history-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: rgba(0,0,0,0.05);
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 1.05rem;
+}
+
+.vd-history-phase {
+  font-weight: 800;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.vd-day-phase-badge {
+  background-color: #f1c40f;
+  color: #111;
+}
+
+.vd-night-phase-badge {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.vd-history-event {
+  font-weight: 500;
+  color: #333;
+}
