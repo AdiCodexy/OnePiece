@@ -190,7 +190,7 @@ export default function LeaderboardPage() {
         {/* Left Column: Personal Rank */}
         <div className="bento-lb-personal bento-box lb-anim">
           <div className="personal-rank-badge">Your Standing</div>
-          <div className="personal-rank-num">#{currentUserRank}</div>
+          <div className="personal-rank-num">#{currentUserRank === 0 ? '-' : currentUserRank}</div>
           <img 
             src={`/assets/member/${currentUser.image_filename}`} 
             alt={currentUser.name} 
@@ -199,7 +199,7 @@ export default function LeaderboardPage() {
             onError={(e) => e.target.src='/assets/Mainimg/hero-bg.jpg'} 
           />
           <h2 className="pq-name">{currentUser.name}</h2>
-          <div className="personal-score">{getScoreDisplay(sortedData[currentUserIndex])}</div>
+          <div className="personal-score">{currentUserIndex !== -1 ? getScoreDisplay(sortedData[currentUserIndex]) : '-'}</div>
 
         </div>
 
