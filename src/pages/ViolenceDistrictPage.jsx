@@ -189,6 +189,9 @@ export default function ViolenceDistrictPage() {
 
   // Render Player Action Button based on Role and Phase
   const renderActionButton = (player) => {
+    if (currentUser?.is_visitor) {
+      return <button className="vd-vote-btn vd-btn-disabled" disabled>Visitor</button>;
+    }
     if (userRole === 'Admin') {
       return <button className="vd-vote-btn vd-btn-disabled" disabled>Admin</button>;
     }

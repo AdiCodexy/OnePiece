@@ -219,27 +219,37 @@ export default function ChallengePage() {
                 onChange={handleGoalChange}
                 step="0.5"
                 min="0"
+                disabled={currentUser?.is_visitor}
               /> hrs
             </div>
-            <form className="log-form" onSubmit={handleLogSubmit}>
-              <input
-                type="number"
-                className="log-input"
-                placeholder="Hours..."
-                value={logInput}
-                onChange={(e) => setLogInput(e.target.value)}
-                step="0.5"
-                min="0"
-              />
-              <input
-                type="text"
-                className="log-input log-notes-input"
-                placeholder="What did you study today?"
-                value={logNotes}
-                onChange={(e) => setLogNotes(e.target.value)}
-              />
-              <button type="submit" className="log-btn">Log Study</button>
-            </form>
+            <div className="pc-header">
+              <h3>Log Today's Study Hours</h3>
+              {currentUser?.is_visitor ? (
+                <div style={{ color: '#888', marginTop: '1rem', fontStyle: 'italic' }}>
+                  Visitors cannot log study hours.
+                </div>
+              ) : (
+                <form className="log-form" onSubmit={handleLogSubmit}>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="0"
+                    placeholder="Hours (e.g. 2.5)"
+                    value={logInput}
+                    onChange={(e) => setLogInput(e.target.value)}
+                    required
+                    className="log-input"
+                  />
+                  <textarea
+                    placeholder="- Studied React context\n- Read Chapter 4"
+                    value={logNotes}
+                    onChange={(e) => setLogNotes(e.target.value)}
+                    className="log-notes-input"
+                  />
+                  <button type="submit" className="log-btn">Log Study</button>
+                </form>
+              )}
+            </div>
           </div>
           <div className="pc-streak-box">
             <div className="streak-number">{currentUserStreak}</div>

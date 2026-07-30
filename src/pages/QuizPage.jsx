@@ -219,7 +219,15 @@ export default function QuizPage() {
           {quizState === 'pre' && (
             <div className="pre-quiz-state">
               <h1 className="pre-quiz-title">Ready for the challenge?</h1>
-              {canTakeQuiz ? (
+              {currentUser?.is_visitor ? (
+                <>
+                  <p style={{fontFamily: 'Inter', color: '#ff3333', fontSize: '16px', fontWeight: 'bold'}}>
+                    Visitors cannot take daily quizzes.
+                  </p>
+                  <button className="pq-btn" disabled style={{opacity: 0.5, cursor: 'not-allowed'}}>Visitor Access Only</button>
+                  <Link to="/" style={{display: 'block', marginTop: '1rem', color: '#000', fontWeight: 'bold', textDecoration: 'underline'}}>Go to Dashboard</Link>
+                </>
+              ) : canTakeQuiz ? (
                 <>
                   <p style={{fontFamily: 'Inter', color: '#555', fontSize: '18px'}}>Test your knowledge on what you just studied!</p>
                   <button className="pq-btn" onClick={handleStart}>Start Quiz</button>

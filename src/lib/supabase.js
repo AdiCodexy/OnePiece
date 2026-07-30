@@ -464,16 +464,34 @@ export async function generateQuiz(subjects, hobbies, studyNotes) {
 }
 
 export async function authenticateWithCode(code) {
+  if (code === '0000') {
+    return {
+      id: 9999,
+      name: 'Visitor',
+      bio: 'Just looking around. Can look but cannot touch.',
+      hobbies: 'Observing',
+      subjects: 'Surveillance',
+      image_filename: 'hero-bg.jpg',
+      access_code: '0000',
+      is_visitor: true
+    };
+  }
+
   if (supabase) {
     const { data, error } = await supabase
       .from('members')
       .select('*')
       .eq('access_code', code)
-      .single();
-    if (!error && data) return data;
+      .maybeSingle();
+      
+    if (error) {
+      console.error('Error authenticating:', error);
+      return null;
+    }
+    return data || null;
   }
   
-  // Mock fallback
+  // Mock fallback only if Supabase isn't configured
   const found = mockMembers.find(m => m.access_code === code);
   return found || null;
 }
